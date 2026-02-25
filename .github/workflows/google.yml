@@ -1,5 +1,4 @@
-name: Build and push Docker image
-
+name: GCP push
 on:
   push:
     branches: [ main ]
