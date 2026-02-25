@@ -1,0 +1,30 @@
+name: Build and push Docker image
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with: 
+          credentials_json: ${{secrets.GCP}}
+      - uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: cs-poc-hpzdycpiqjyvinhrczvlwcn
+      - run: gcloud auth configure-docker europe-west9-docker.pkg.dev
+          
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with: 
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            europe-west9-docker.pkg.dev/cs-poc-hpzdycpiqjyvinhrczvlwcn/student-martin/quelpoke:latest
+            europe-west9-docker.pkg.dev/cs-poc-hpzdycpiqjyvinhrczvlwcn/student-martin/quelpoke:${{ github.sha }}
